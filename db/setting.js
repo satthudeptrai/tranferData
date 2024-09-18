@@ -8,4 +8,12 @@ const connect = async () => {
     console.log(error);
   }
 };
-module.exports = connect;
+const disconnect = async () => {
+  try {
+    mongoose.connection.close();
+    console.log("disconnect");
+  } catch (error) {
+    console.log(error);
+  }
+}
+module.exports = { connect, disconnect };
