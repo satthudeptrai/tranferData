@@ -1,77 +1,24 @@
-const axios = require("axios");
-const { connect, disconnect } = require("./db/setting.js");
-const poke = require("./model/poke.js")
-let index = 0;
-const test = async () => {
-  await connect();
-  const res = await axios({
-    method: 'get',
-    url: 'https://pokeapi.co/api/v2/pokemon?limit=10000&offset=0',
+require('dotenv').config();
+const os = require('os');
+const port = process.env.VUE_APP_PORT;
+const express = require('express');
+const app = express();
+const cors = require('cors');
+const server = require("http").createServer(app);
+const {connect} = require('./db/setting.js');
+const configRouter = require('./routers/index');
+app.use(express.urlencoded({
+  extended: true
+}));
+app.use(express.json());
+// app.use(cors({origin: ['http://localhost:8080', 'http://192.168.53.83:8080']}))
+connect();
+configRouter(app);
+const networkInterfaces = os.networkInterfaces();
+const ip = networkInterfaces.Ethernet?.find(item => item.family === "IPv4")?.address;
+app.use((err, req, res, next) => {
+  res.status(err.status || 500).json({
+    message: err.message
   });
-  await res.data.results.forEach(async (item) => {
-    const data = await axios({
-      method: 'get',
-      url: `https://pokeapi.co/api/v2/pokemon/${item.name}`,
-    });
-    const dataTranfer = {
-      ...data.data,
-      abilities: data.data.abilities.map(item => item.ability.name),
-      types: data.data.types.map(item => item.type.name),
-      sprites: {
-        back_default: data.data.sprites.back_default,
-        back_female: data.data.sprites.back_female,
-        back_shiny: data.data.sprites.back_shiny,
-        back_shiny_female: data.data.sprites.back_shiny_female,
-        front_default: data.data.sprites.front_default,
-        front_female: data.data.sprites.front_female,
-        front_shiny: data.data.sprites.front_shiny,
-        front_shiny_female: data.data.sprites.front_shiny_female,
-      
-      },
-      moves: data.data.moves.map(item => {
-        return {
-          name: item.move.name,
-          lv: item.version_group_details[0].level_learned_at
-        }
-      }),
-      hp: {
-        base_stat: data.data.stats[0].base_stat,
-        effort: data.data.stats[0].effort,
-      },
-      attack: {
-        base_stat: data.data.stats[1].base_stat,
-        effort: data.data.stats[1].effort,
-      },
-      defense: {
-        base_stat: data.data.stats[2].base_stat,
-        effort: data.data.stats[2].effort,
-      },
-      attackSp: {
-        base_stat: data.data.stats[3].base_stat,
-        effort: data.data.stats[3].effort,
-      },
-      defenseSp: {
-        base_stat: data.data.stats[4].base_stat,
-        effort: data.data.stats[4].effort,
-      },
-      speed: {
-        base_stat: data.data.stats[5].base_stat,
-        effort: data.data.stats[5].effort,
-      },
-    }
-    await poke.create(dataTranfer);
-    index++;
-    console.log("index", index)
-  });
-}
-
-const getRamdom = async () => {
-  await connect();
-  const count = await poke.countDocuments();
-  const ramdom = Math.floor(Math.random() * count) + 1;
-  console.log("ramdom", ramdom)
-  const data = await poke.findOne().skip(ramdom);
-  console.log(data);
-  disconnect();
-}
-getRamdom();
+})
+server.listen(port, () => console.log(`${ip}:${port}`));
