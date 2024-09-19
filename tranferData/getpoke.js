@@ -64,3 +64,4 @@ const test = async () => {
     console.log("index", index)
   });
 }
+test();
