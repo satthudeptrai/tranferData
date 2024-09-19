@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "pokeClone": "node tranferData getpoke.js",
-    "yugiClone": "node tranferData getCardYugi.js"
+    "pokeClone": "node tranferData/getpoke.js",
+    "yugiClone": "node tranferData/getCardYugi.js",
+    "translate": "node tranferData/translate.js"
   },
   "author": "",
   "license": "ISC",
@@ -17,6 +18,7 @@
     "express": "^4.21.0",
     "mongodb": "^6.9.0",
     "mongoose": "^8.6.3",
-    "os": "^0.1.2"
+    "os": "^0.1.2",
+    "translate-google-api": "^1.0.4"
   }
 }
