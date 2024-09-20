@@ -9,6 +9,7 @@ const yugi = new Schema({
   humanReadableCardType: String,
   frameType: String,
   desc: String,
+  descVn: String,
   race: String,
   atk: Number,
   def: Number,

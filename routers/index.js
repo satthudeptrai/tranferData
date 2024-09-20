@@ -15,6 +15,12 @@ const routers = [
     method: 'get',
     handle: Controller.getRamdom
   },
+  {
+    path: '/getRamdomCard',
+    name: 'getRamdomCard',
+    method: 'get',
+    handle: Controller.getRamdomCard
+  },
 ];
 
 const configRouter = (app) => {
